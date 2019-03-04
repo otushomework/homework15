@@ -9,9 +9,9 @@ project(kkmeans VERSION 0.0.$ENV{TRAVIS_BUILD_NUMBER})
 add_executable(${PROJECT_NAME} main.cpp)
 
 #поиск пакетов-зависимостей
-find_package(dlib REQUIRED COMPONENTS)
+find_package(dlib REQUIRED)
 
-#линковка
+#linking
 target_link_libraries(${PROJECT_NAME} dlib::dlib)
 
 #задаем параметры компилятора

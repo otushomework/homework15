@@ -29,13 +29,75 @@ auto split(const std::string &str, char d)
     return r;
 }
 
-//cat kkmeans_ex.txt | kkmeans 4
+#ifdef _DEBUG
+void generateData(std::string filename)
+{
+    std::ofstream file(filename);
+
+    dlib::rand random_generator;
+
+    const int num_points_in_cluster = 100;
+    double x, y;
+    double radius = 0.5;
+
+    for (int i = 0; i < num_points_in_cluster; ++i)
+    {
+        double sign = 1;
+        if (random_generator.get_random_double() < 0.5)
+            sign = -1;
+
+        x = 2 * radius * random_generator.get_random_double() - radius;
+        y = sign * sqrt(radius * radius - x * x);
+
+        file << x << ";" << y << std::endl;
+    }
+
+    radius = 10.0;
+    for (long i = 0; i < num_points_in_cluster; ++i)
+    {
+        double sign = 1;
+        if (random_generator.get_random_double() < 0.5)
+            sign = -1;
+
+        x = 2 * radius * random_generator.get_random_double() - radius;
+        y = sign * sqrt(radius * radius - x * x);
+
+        file << x << ";" << y << std::endl;
+    }
+
+    radius = 4.0;
+    for (long i = 0; i < num_points_in_cluster; ++i)
+    {
+        double sign = 1;
+        if (random_generator.get_random_double() < 0.5)
+            sign = -1;
+        x = 2 * radius * random_generator.get_random_double() - radius;
+        y = sign * sqrt(radius * radius - x * x);
+
+        x += 25;
+        y += 25;
+
+        file << x << ";" << y << std::endl;
+    }
+}
+#endif
+
+//cat kkmeans_ex.txt | ./kkmeans 3
 int main(int argc, char * argv[])
 {
     if (argc != 2)
     {
         return 1;
     }
+
+#ifdef _DEBUG
+    // ./kkmeans generate
+    if (std::string(argv[1]) == "generate")
+    {
+        generateData("kkmeans_ex.txt");
+        return 0;
+    }
+#endif
 
     dlib::kcentroid<kernel_type> kc(kernel_type(0.1),0.01, 8);
     dlib::kkmeans<kernel_type> test(kc);
@@ -59,7 +121,7 @@ int main(int argc, char * argv[])
 
     test.set_number_of_centers(clustersCount);
     dlib::pick_initial_centers(clustersCount, initialCenters, samples, test.get_kernel());
-    test.train(samples,initialCenters);
+    test.train(samples, initialCenters);
 
     for (unsigned long i = 0; i < samples.size(); ++i)
     {
